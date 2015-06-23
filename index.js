@@ -92,6 +92,9 @@ function verifyActionHandler(cb) {
   return function verifyOnly(file, result) {
     var fileContents = file.contents.toString('utf8');
 
+    // custom beautify rule
+    result = result.replace(/function\((.*)\)\s\{/g, 'function($1){');
+
     /*jshint eqeqeq: false */
     if (fileContents == result || fileContents == result.substr(0, result.length - 1)) {
       return cb(null, file);
