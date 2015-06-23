@@ -20,6 +20,8 @@ var jsbeautifier = prettify.js;
 var cssbeautifier = prettify.css;
 var htmlbeautifier = prettify.html;
 
+var indent = '';
+
 function convertCamelCaseToUnderScore(config) {
   var underscoreKey;
   _.forEach([config.js, config.css, config.html], function(conf) {
@@ -95,6 +97,10 @@ function verifyActionHandler(cb) {
     // custom beautify rule
     result = result.replace(/function\((.*)\)\s\{/g, 'function($1){');
 
+    // tab to space for ansidiff
+    fileContents = fileContents.replace(/\t/g, indent);
+    result = result.replace(/\t/g, indent);
+
     /*jshint eqeqeq: false */
     if (fileContents == result || fileContents == result.substr(0, result.length - 1)) {
       return cb(null, file);
@@ -152,6 +158,14 @@ module.exports = function prettify(params) {
   config.js.fileTypes = _.union(config.js.fileTypes, ['.js', '.json']);
   config.css.fileTypes = _.union(config.css.fileTypes, ['.css']);
   config.html.fileTypes = _.union(config.html.fileTypes, ['.html']);
+
+  if (config.js.indentChar === '\t') {
+    indent = '    ';
+  } else {
+    for (var i = 0; i < config.js.indentSize; i++) {
+      indent += config.js.indentChar;
+    }
+  }
 
   convertCamelCaseToUnderScore(config);
 
