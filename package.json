@@ -29,7 +29,8 @@
     "coverage": "jscoverage index.js index-cov.js; COVERAGE=1 mocha --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "ansidiff": "^1.0.0",
+    "chalk": "^1.0.0",
+    "diff": "^1.4.0",
     "event-stream": "^3.3.0",
     "gulp-util": "^3.0.4",
     "js-beautify": "^1.5.1",

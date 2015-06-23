@@ -7,7 +7,8 @@
 
 
 var es = require('event-stream');
-var ansidiff = require('ansidiff');
+var jsdiff = require('diff');
+var chalk = require('chalk');
 var prettify = require('js-beautify');
 var gutil = require('gulp-util');
 var _ = require('lodash');
@@ -97,7 +98,7 @@ function verifyActionHandler(cb) {
     // custom beautify rule
     result = result.replace(/function\((.*)\)\s\{/g, 'function($1){');
 
-    // tab to space for ansidiff
+    // tab to space for diff
     fileContents = fileContents.replace(/\t/g, indent);
     result = result.replace(/\t/g, indent);
 
@@ -107,8 +108,15 @@ function verifyActionHandler(cb) {
     }
 
     // return cb(null, file);
+    var diff = jsdiff.diffChars(fileContents, result),
+      message = '';
+    diff.forEach(function(part){
+      var color = part.added ? 'bgGreen' : part.removed ? 'bgRed' : 'white';
+      message += chalk[color](part.value);
+    });
+
     var errOpts = {
-      message: 'Beautify failed for: ' + file.relative + '\n\n' + ansidiff.chars(fileContents, result),
+      message: 'Beautify failed for: ' + file.relative + '\n\n' + message,
       showStack: false
     };
 
